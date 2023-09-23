@@ -71,8 +71,7 @@
     shell: docker build /home/{{ remote_home_users }}/project/nginx/. -t nginxphp:1.0.0
 
   - name: docker compose up
-    shell: docker compose -f /home/{{ remote_home_users }}/project/nginx/docker-compose.yaml up -d
-    tags: reconfig 
+    shell: docker compose -f /home/{{ remote_home_users }}/project/nginx/docker-compose.yaml up -d 
 
   - name: restart nginx container
     shell: docker restart nginxphp
