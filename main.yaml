@@ -1,0 +1,76 @@
+- name: config nginx
+  hosts: all
+  become: yes
+  vars_prompt:
+  - name: listen_port
+    prompt: "Enter listen_port"
+    private: no
+  - name : server_name
+    prompt: "Enter server_name"
+    private: no
+  - name : remote_home_users
+    prompt: "Enter remote home user"
+    private: no
+  - name : worker_connections
+    prompt: "worker_connections"
+    private: no
+
+  tasks:
+
+  - name: Create folder nginx
+    ansible.builtin.file:
+      path: /home/{{ remote_home_users }}/project
+      owner: "{{ remote_home_users }}"
+      group: "{{ remote_home_users }}"
+      mode: '0764'
+      state: directory
+
+  - name: Create folder nginx
+    ansible.builtin.file:
+      path: /home/{{ remote_home_users }}/project/nginx
+      owner: "{{ remote_home_users }}"
+      group: "{{ remote_home_users }}"
+      mode: '0764'       
+      state: directory
+
+  - name: Create folder config
+    ansible.builtin.file:
+      path: /home/{{ remote_home_users }}/project/nginx/config
+      owner: "{{ remote_home_users }}"
+      group: "{{ remote_home_users }}"
+      mode: '0764'
+      state: directory
+
+  - name: Copy dockerfile
+    ansible.builtin.copy:
+      src: ./dockerfile
+      dest: /home/{{ remote_home_users }}/project/nginx/dockerfile
+      owner: "{{ remote_home_users }}"
+      group: "{{ remote_home_users }}"
+      mode: '0644'
+
+  - name: generrate dafault.conf
+    ansible.builtin.template:
+      src: config/nginx/default.j2
+      dest: /home/{{ remote_home_users }}/project/nginx/config/default.conf
+      tags: generrate_dafault.conf
+
+  - name: generrate nginx.conf
+    ansible.builtin.template:
+      src: config/nginx/nginx.j2
+      dest: /home/{{ remote_home_users }}/project/nginx/config/nginx.conf
+      tags: conf_nginx.conf
+
+  - name: generrate docker compose
+    ansible.builtin.template:
+      src: docker-compose.j2
+      dest: /home/{{ remote_home_users }}/project/nginx/docker-compose.yaml 
+      tags:  generrate_docker_compose
+
+  - name: docker build
+    shell: docker build /home/{{ remote_home_users }}/project/nginx/. -t nginxphp:1.0.0
+    tags: docker_build
+
+  - name: restart nginx container
+    shell: docker restart nginxphp
+    tags: restart_container 
