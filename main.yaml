@@ -53,24 +53,27 @@
     ansible.builtin.template:
       src: config/nginx/default.j2
       dest: /home/{{ remote_home_users }}/project/nginx/config/default.conf
-      tags: generrate_dafault.conf
+    tags: config
 
   - name: generrate nginx.conf
     ansible.builtin.template:
       src: config/nginx/nginx.j2
       dest: /home/{{ remote_home_users }}/project/nginx/config/nginx.conf
-      tags: conf_nginx.conf
+    tags: config
 
   - name: generrate docker compose
     ansible.builtin.template:
       src: docker-compose.j2
       dest: /home/{{ remote_home_users }}/project/nginx/docker-compose.yaml 
-      tags:  generrate_docker_compose
+    tags: config
 
   - name: docker build
     shell: docker build /home/{{ remote_home_users }}/project/nginx/. -t nginxphp:1.0.0
-    tags: docker_build
+
+  - name: docker compose up
+    shell: docker compose -f /home/{{ remote_home_users }}/project/nginx/docker-compose.yaml up -d
+    tags: reconfig 
 
   - name: restart nginx container
     shell: docker restart nginxphp
-    tags: restart_container 
+    tags: [restart, config] 
