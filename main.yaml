@@ -25,6 +25,14 @@
       mode: '0764'
       state: directory
 
+  - name: Create folder data
+    ansible.builtin.file:
+      path: /home/{{ remote_home_users }}/project/data
+      owner: "{{ remote_home_users }}"
+      group: "{{ remote_home_users }}"
+      mode: '0764'
+      state: directory
+
   - name: Create folder nginx
     ansible.builtin.file:
       path: /home/{{ remote_home_users }}/project/nginx

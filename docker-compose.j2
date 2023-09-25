@@ -9,7 +9,7 @@ services:
     ports:
       - "0.0.0.0:3306:3306"
     volumes:
-      - /home/{{ remote_home_users }}/project/nginx/config:/var/lib/mysql
+      - /home/{{ remote_home_users }}/project/nginx/data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: test123
     restart: always
